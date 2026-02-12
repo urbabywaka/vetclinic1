@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View User | Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: #f8fafc; padding: 2rem; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 2rem; }
+        .user-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+        .info-card { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; }
+        .table th, .table td { padding: 1rem; border-bottom: 1px solid #e2e8f0; }
+        .back-btn { display: inline-block; margin-top: 1rem; padding: 0.8rem 1.5rem; background: #3b82f6; color: white; text-decoration: none; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-user"></i> User Details</h1>
+            <div class="user-info">
+                <div class="info-card">
+                    <h3>Username: {{ view_user.username }}</h3>
+                    <p>Email: {{ view_user.email }}</p>
+                    <p>Joined: {{ view_user.date_joined|date:"M d, Y" }}</p>
+                </div>
+                <div class="info-card">
+                    <h3>Appointments: {{ appointment_count }}</h3>
+                    <p>Status: {% if view_user.is_superuser %}Admin{% else %}Regular User{% endif %}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-card">
+            <h3>User's Appointments</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Pet</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                        <th>Reason</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for app in user_appointments %}
+                    <tr>
+                        <td>{{ app.pet_name }}</td>
+                        <td>{{ app.appointment_date }}</td>
+                        <td>{{ app.appointment_time }}</td>
+                        <td><span class="status-badge status-{{ app.status }}">{{ app.get_status_display }}</span></td>
+                        <td>{{ app.reason|truncatechars:50 }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5">No appointments found</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <a href="{% url 'admin_dashboard' %}" class="back-btn">← Back to Dashboard</a>
+    </div>
+</body>
+</html>

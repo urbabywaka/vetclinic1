@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if appointment.id %}Edit{% else %}New{% endif %} Appointment | VetCare Pro</title>
+    <style>
+        /* ===== RESET & GLOBAL ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        /* ===== CARD CONTAINER ===== */
+        .form-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 620px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        /* ===== HEADER – clean gradient, no border noise ===== */
+        .form-header {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            color: white;
+            padding: 2rem 1.8rem;
+            text-align: center;
+            border-bottom: none;
+        }
+
+        .form-header h1 {
+            font-size: 1.9rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        .form-header p {
+            opacity: 0.9;
+            font-size: 0.98rem;
+            font-weight: 400;
+        }
+
+        /* ===== BODY – spacing, no leftover brackets ===== */
+        .form-body {
+            padding: 2.2rem 2rem;
+        }
+
+        /* ----- form fields – unified, border fixed ----- */
+        .form-group {
+            margin-bottom: 1.7rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.45rem;
+            font-weight: 600;
+            color: #0b3b5c; /* deeper, readable */
+            font-size: 0.95rem;
+            letter-spacing: 0.3px;
+        }
+
+        /* All inputs, selects, textareas – clean border, no weird underlines */
+        .form-control, 
+        input.form-control, 
+        select.form-control, 
+        textarea.form-control {
+            width: 100%;
+            padding: 0.85rem 1.2rem;
+            border: 1.8px solid #dde2e8;   /* subtle, solid border – no brackets */
+            border-radius: 12px;            /* slightly softer */
+            font-size: 0.98rem;
+            transition: all 0.2s ease;
+            background-color: #fafcff;
+            color: #1e293b;
+            line-height: 1.5;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
+        }
+
+        /* no more placeholders like [______] – real fields only */
+        .form-control:focus {
+            outline: none;
+            border-color: #2563eb;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1), inset 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        /* select arrow custom (subtle) */
+        select.form-control {
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%234b5563" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 1.2rem center;
+            background-size: 1.1rem;
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        /* error messages — crisp */
+        .error-message {
+            color: #b91c1c;
+            font-size: 0.8rem;
+            margin-top: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: #fee2e2;
+            padding: 0.3rem 0.9rem;
+            border-radius: 30px;
+            width: fit-content;
+            border: 1px solid #fecaca;
+            font-weight: 500;
+        }
+
+        /* clinic hours note – border fixed, harmonious */
+        .form-note {
+            background: #ecf7fe;
+            border-left: 5px solid #1e40af;
+            padding: 1.1rem 1.3rem;
+            margin-bottom: 1.8rem;
+            border-radius: 0 16px 16px 0;
+            font-size: 0.95rem;
+            color: #1e3a5f;
+            border-top: 1px solid #cbd5e1;
+            border-right: 1px solid #cbd5e1;
+            border-bottom: 1px solid #cbd5e1;
+            font-weight: 450;
+            display: flex;
+            gap: 0.7rem;
+            align-items: center;
+            background: linear-gradient(to right, #f0f9ff, #f9fcff);
+        }
+
+        .form-note i {
+            color: #1e4a8b;
+            font-size: 1.2rem;
+        }
+
+        /* ===== BUTTONS – border/background polished ===== */
+        .form-actions {
+            display: flex;
+            gap: 1.2rem;
+            margin-top: 2.4rem;
+            padding-top: 1.5rem;
+            border-top: 1.5px solid #e9edf2;
+        }
+
+        .btn {
+            padding: 0.9rem 1.8rem;
+            border-radius: 40px;        /* pill shape – softer border */
+            font-weight: 600;
+            font-size: 0.98rem;
+            cursor: pointer;
+            transition: 0.2s;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            border: 1.5px solid transparent; /* ready for hover */
+        }
+
+        .btn-primary {
+            background: #1e3f8f;
+            color: white;
+            flex: 1;
+            box-shadow: 0 6px 14px rgba(30, 64, 175, 0.25);
+            border: 1.5px solid #2854b3;
+        }
+
+        .btn-primary:hover {
+            background: #143175;
+            border-color: #0f2a62;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 20px rgba(30, 64, 175, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #1e3a5f;
+            border: 1.5px solid #cbd5e1;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+
+        .btn-secondary:hover {
+            background: #f8fafd;
+            border-color: #94a3b8;
+        }
+
+        /* Django form fields: enforce .form-control class automatically */
+        /* we style input, select, textarea directly + via .form-control */
+        input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type="radio"]),
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.85rem 1.2rem;
+            border: 1.8px solid #dde2e8;
+            border-radius: 12px;
+            font-size: 0.98rem;
+            background-color: #fafcff;
+            transition: border 0.2s, box-shadow 0.2s;
+        }
+
+        /* clean focus for all */
+        input:focus, select:focus, textarea:focus {
+            border-color: #2563eb;
+            background: white;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+        }
+
+        /* make sure the background of readonly/disabled is consistent */
+        input:disabled, select:disabled, textarea:disabled {
+            background-color: #f1f5f9;
+        }
+
+        /* no trace of fake underline/ brackets — the mockup [______] removed */
+        .form-group .form-control::-webkit-input-placeholder {
+            color: #8896a8;
+            font-weight: 400;
+            opacity: 0.7;
+        }
+
+        /* responsive */
+        @media (max-width: 640px) {
+            body { padding: 1rem; }
+            .form-body { padding: 1.7rem; }
+            .form-actions { flex-direction: column; }
+        }
+
+        /* fix any potential django-rendered fields without explicit class */
+        #id_pet_name, #id_species, #id_appointment_date, #id_appointment_time, #id_reason {
+            width: 100%;
+            padding: 0.85rem 1.2rem;
+            border: 1.8px solid #dde2e8;
+            border-radius: 12px;
+        }
+        
+        /* specific spacing for icon + clinic hours */
+        .fa-clock {
+            margin-right: 2px;
+        }
+
+        /* eliminate any trace of "bracket" style from image mock */
+        hr {
+            display: none;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="form-container">
+        <div class="form-header">
+            <h1>
+                <i class="fas fa-calendar-plus" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));"></i>
+                {% if appointment and appointment.id %}Edit Appointment{% else %}Book New Appointment{% endif %}
+            </h1>
+            <p>Fill in the details below to schedule your pet's appointment</p>
+        </div>
+
+        <div class="form-body">
+            {% if messages %}
+                {% for message in messages %}
+                <div class="form-note" style="background: #e6f3e6; border-left-color: #15803d; border-color: #bbf7d0; color: #14532d;">
+                    <i class="fas fa-check-circle" style="color: #15803d;"></i> {{ message }}
+                </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="POST">
+                {% csrf_token %}
+                
+                <!-- PET NAME – no brackets, clean border -->
+                <div class="form-group">
+                    <label class="form-label"><i class="fas fa-paw" style="margin-right: 6px; color: #3b82f6;"></i> Pet Name *</label>
+                    {{ form.pet_name }}
+                    {% if form.pet_name.errors %}
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-circle"></i> {{ form.pet_name.errors|join:", " }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- SPECIES -->
+                <div class="form-group">
+                    <label class="form-label"><i class="fas fa-tag" style="margin-right: 6px; color: #3b82f6;"></i> Species / Type *</label>
+                    {{ form.species }}
+                    {% if form.species.errors %}
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-circle"></i> {{ form.species.errors|join:", " }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- DATE -->
+                <div class="form-group">
+                    <label class="form-label"><i class="fas fa-calendar-alt" style="margin-right: 6px; color: #3b82f6;"></i> Appointment Date *</label>
+                    {{ form.appointment_date }}
+                    {% if form.appointment_date.errors %}
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-circle"></i> {{ form.appointment_date.errors|join:", " }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- TIME -->
+                <div class="form-group">
+                    <label class="form-label"><i class="fas fa-clock" style="margin-right: 6px; color: #3b82f6;"></i> Appointment Time *</label>
+                    {{ form.appointment_time }}
+                    {% if form.appointment_time.errors %}
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-circle"></i> {{ form.appointment_time.errors|join:", " }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- REASON -->
+                <div class="form-group">
+                    <label class="form-label"><i class="fas fa-notes-medical" style="margin-right: 6px; color: #3b82f6;"></i> Reason for Visit *</label>
+                    {{ form.reason }}
+                    {% if form.reason.errors %}
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-circle"></i> {{ form.reason.errors|join:", " }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- CLINIC HOURS – refined border -->
+                <div class="form-note">
+                    <i class="fas fa-clock"></i> 
+                    <span><strong>Clinic Hours:</strong> Monday-Saturday: 8:00 AM – 8:00 PM, Sunday: 9:00 AM – 4:00 PM</span>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-calendar-check"></i> {% if appointment and appointment.id %}Update Appointment{% else %}Schedule Appointment{% endif %}
+                    </button>
+                    <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+                        <i class="fas fa-times-circle"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- 
+        ===== BORDER FIX =====
+        - Removed all mock placeholder [______] 
+        - All input borders are unified, 1.8px solid with soft radius
+        - No dashed, no weird underline, no visual brackets
+        - Form note border balanced (left accent + right/bottom subtle)
+        - Focus states crisp with blue glow
+    -->
+</body>
+</html>

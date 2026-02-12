@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | VetCare Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            color: #334155;
+        }
+
+        .dashboard-header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            padding: 1.2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dashboard-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .dashboard-title h1 {
+            font-size: 1.8rem;
+            color: #1e293b;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .btn-logout {
+            background: #ef4444;
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: #dc2626;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .icon-blue { background: #3b82f6; }
+        .icon-green { background: #10b981; }
+        .icon-purple { background: #8b5cf6; }
+        .icon-orange { background: #f59e0b; }
+        .icon-red { background: #ef4444; }
+        .icon-gray { background: #6b7280; }
+        .icon-indigo { background: #6366f1; }
+
+        .stat-content h3 {
+            font-size: 1rem;
+            color: #64748b;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .actions-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+        .btn-primary {
+            background: #1e40af;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1e3a8a;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+            transform: translateY(-2px);
+        }
+
+        .appointments-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .appointments-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .appointments-table th {
+            background: #f8fafc;
+            padding: 1rem;
+            text-align: left;
+            color: #475569;
+            font-weight: 600;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .appointments-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .status-pending { background: #fef3c7; color: #d97706; }
+        .status-approved { background: #d1fae5; color: #059669; }
+        .status-rejected { background: #fee2e2; color: #dc2626; }
+        .status-completed { background: #dbeafe; color: #1e40af; }
+        .status-cancelled { background: #f3f4f6; color: #6b7280; }
+
+        /* Action Buttons */
+        .action-buttons-cell {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .btn-edit { background: #dbeafe; color: #1e40af; }
+        .btn-edit:hover { background: #bfdbfe; }
+        .btn-delete { background: #fee2e2; color: #dc2626; }
+        .btn-delete:hover { background: #fecaca; }
+        .btn-view { background: #fef3c7; color: #d97706; }
+        .btn-view:hover { background: #fde68a; }
+        .btn-disabled { background: #f3f4f6; color: #6b7280; cursor: not-allowed; }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #64748b;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #cbd5e1;
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+        }
+
+        .filter-tab.active {
+            background: #1e40af;
+            color: white;
+            border-color: #1e40af;
+        }
+
+        .filter-tab:hover:not(.active) {
+            background: #e2e8f0;
+        }
+
+        /* Notes Section */
+        .notes-section {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: #475569;
+            border-left: 3px solid #3b82f6;
+        }
+
+        .notes-section strong {
+            color: #1e293b;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .filter-tabs {
+                justify-content: center;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="dashboard-title">
+            <h1><i class="fas fa-chart-line"></i> Dashboard</h1>
+            <span>Welcome back, {{ user.username }}!</span>
+        </div>
+        <div class="user-info">
+            <span class="user-name">{{ user.email }}</span>
+            <a href="{% url 'logout' %}" class="btn-logout">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="dashboard-container">
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon icon-blue">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Total Appointments</h3>
+                    <div class="stat-number">{{ appointments.count }}</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon icon-green">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Approved</h3>
+                    <div class="stat-number">{{ approved_count }}</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon icon-orange">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Pending</h3>
+                    <div class="stat-number">{{ pending_count }}</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon icon-red">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Rejected</h3>
+                    <div class="stat-number">{{ rejected_count }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <section class="actions-section">
+            <h2 class="section-title">Quick Actions</h2>
+            <div class="action-buttons">
+                <a href="{% url 'add_appointment' %}" class="btn-action btn-primary">
+                    <i class="fas fa-plus-circle"></i> New Appointment
+                </a>
+                <a href="{% url 'home' %}" class="btn-action btn-secondary">
+                    <i class="fas fa-home"></i> Back to Home
+                </a>
+                <a href="#" class="btn-action btn-secondary" onclick="window.print()">
+                    <i class="fas fa-print"></i> Print Records
+                </a>
+                <a href="#" class="btn-action btn-secondary" onclick="exportToCSV()">
+                    <i class="fas fa-download"></i> Export Data
+                </a>
+            </div>
+        </section>
+
+        <!-- Appointments Table -->
+        <section class="appointments-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 class="section-title" style="margin: 0;">Your Appointments</h2>
+                
+                <!-- Filter Tabs -->
+                <div class="filter-tabs">
+                    <a href="?status=all" class="filter-tab {% if current_filter == 'all' or not current_filter %}active{% endif %}">All</a>
+                    <a href="?status=pending" class="filter-tab {% if current_filter == 'pending' %}active{% endif %}">Pending</a>
+                    <a href="?status=approved" class="filter-tab {% if current_filter == 'approved' %}active{% endif %}">Approved</a>
+                    <a href="?status=rejected" class="filter-tab {% if current_filter == 'rejected' %}active{% endif %}">Rejected</a>
+                    <a href="?status=completed" class="filter-tab {% if current_filter == 'completed' %}active{% endif %}">Completed</a>
+                    <a href="?status=cancelled" class="filter-tab {% if current_filter == 'cancelled' %}active{% endif %}">Cancelled</a>
+                </div>
+            </div>
+            
+            {% if appointments %}
+            <div class="table-container">
+                <table class="appointments-table">
+                    <thead>
+                        <tr>
+                            <th>Pet Name</th>
+                            <th>Species</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for appointment in appointments %}
+                        <tr>
+                            <td>
+                                <strong>{{ appointment.pet_name }}</strong>
+                                {% if appointment.notes %}
+                                <div class="notes-section">
+                                    <strong>Notes:</strong> {{ appointment.notes }}
+                                </div>
+                                {% endif %}
+                            </td>
+                            <td>{{ appointment.species }}</td>
+                            <td>{{ appointment.appointment_date }}</td>
+                            <td>{{ appointment.appointment_time }}</td>
+                            <td>{{ appointment.reason|truncatechars:30 }}</td>
+                            <td>
+                                {% if appointment.status == 'pending' %}
+                                    <span class="status-badge status-pending">
+                                        <i class="fas fa-clock"></i> Pending
+                                    </span>
+                                {% elif appointment.status == 'approved' %}
+                                    <span class="status-badge status-approved">
+                                        <i class="fas fa-check"></i> Approved
+                                    </span>
+                                {% elif appointment.status == 'rejected' %}
+                                    <span class="status-badge status-rejected">
+                                        <i class="fas fa-times"></i> Rejected
+                                    </span>
+                                {% elif appointment.status == 'completed' %}
+                                    <span class="status-badge status-completed">
+                                        <i class="fas fa-check-double"></i> Completed
+                                    </span>
+                                {% elif appointment.status == 'cancelled' %}
+                                    <span class="status-badge status-cancelled">
+                                        <i class="fas fa-ban"></i> Cancelled
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="action-buttons-cell">
+                                    {% if appointment.status == 'pending' or appointment.status == 'rejected' %}
+                                        <a href="{% url 'edit_appointment' appointment.id %}" class="action-btn btn-edit">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                        <a href="{% url 'delete_appointment' appointment.id %}" class="action-btn btn-delete">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </a>
+                                    {% elif appointment.status == 'approved' %}
+                                        <a href="#" class="action-btn btn-view" onclick="showAppointmentDetails('{{ appointment.id }}')">
+                                            <i class="fas fa-eye"></i> View
+                                        </a>
+                                        <button class="action-btn btn-disabled" disabled>
+                                            <i class="fas fa-check"></i> Confirmed
+                                        </button>
+                                    {% elif appointment.status == 'completed' %}
+                                        <button class="action-btn btn-disabled" disabled>
+                                            <i class="fas fa-check-double"></i> Completed
+                                        </button>
+                                    {% elif appointment.status == 'cancelled' %}
+                                        <button class="action-btn btn-disabled" disabled>
+                                            <i class="fas fa-ban"></i> Cancelled
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                {% if current_filter != 'all' %}
+                    <i class="fas fa-filter"></i>
+                    <h3>No {{ current_filter|title }} Appointments</h3>
+                    <p>You don't have any {{ current_filter }} appointments. 
+                       <a href="?status=all">View all appointments</a> or 
+                       <a href="{% url 'add_appointment' %}">schedule a new one</a>.</p>
+                {% else %}
+                    <i class="fas fa-calendar-times"></i>
+                    <h3>No Appointments Yet</h3>
+                    <p>You haven't booked any appointments. Click "New Appointment" to schedule one.</p>
+                    <a href="{% url 'add_appointment' %}" class="btn-action btn-primary" style="margin-top: 1rem;">
+                        <i class="fas fa-plus-circle"></i> Schedule Your First Appointment
+                    </a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </section>
+    </main>
+
+    <!-- Appointment Details Modal -->
+    <div id="appointmentModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
+        <div style="background: white; margin: 10% auto; padding: 2rem; border-radius: 12px; width: 90%; max-width: 500px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+            <h3 style="margin-bottom: 1rem; color: #1e40af;"><i class="fas fa-info-circle"></i> Appointment Details</h3>
+            <div id="modalContent"></div>
+            <button onclick="closeModal()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                <i class="fas fa-times"></i> Close
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Filter functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterTabs = document.querySelectorAll('.filter-tab');
+            const urlParams = new URLSearchParams(window.location.search);
+            const status = urlParams.get('status') || 'all';
+            
+            // Highlight active filter
+            filterTabs.forEach(tab => {
+                const tabStatus = tab.getAttribute('href').split('status=')[1];
+                if ((!status && tabStatus === 'all') || status === tabStatus) {
+                    tab.classList.add('active');
+                }
+            });
+        });
+
+        // Export to CSV function
+        function exportToCSV() {
+            let csv = [];
+            let rows = document.querySelectorAll(".appointments-table tr");
+            
+            for (let i = 0; i < rows.length; i++) {
+                let row = [], cols = rows[i].querySelectorAll("td, th");
+                
+                for (let j = 0; j < cols.length; j++) {
+                    // Skip action column
+                    if (j === 6) continue;
+                    row.push(cols[j].innerText.replace(/,/g, ';'));
+                }
+                
+                csv.push(row.join(","));        
+            }
+
+            // Download CSV file
+            let csvContent = "data:text/csv;charset=utf-8," + csv.join("\n");
+            let encodedUri = encodeURI(csvContent);
+            let link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `appointments_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Show success message
+            alert("Appointments exported successfully!");
+        }
+
+        // Show appointment details modal
+        function showAppointmentDetails(appointmentId) {
+            // In a real app, you would fetch this data from the server via AJAX
+            // For now, we'll show static details
+            const modalContent = `
+                <div style="line-height: 1.6;">
+                    <p><strong><i class="fas fa-paw"></i> Status:</strong> <span class="status-badge status-approved" style="display: inline-block;">Approved</span></p>
+                    <p><strong><i class="fas fa-check-circle"></i> Confirmation:</strong> Your appointment has been confirmed by the admin.</p>
+                    <p><strong><i class="fas fa-calendar-alt"></i> Date & Time:</strong> As scheduled</p>
+                    <p><strong><i class="fas fa-stethoscope"></i> Next Steps:</strong></p>
+                    <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                        <li>Arrive 15 minutes before your appointment</li>
+                        <li>Bring your pet's medical records</li>
+                        <li>Bring any current medications</li>
+                        <li>Fast your pet if required for the procedure</li>
+                    </ul>
+                    <div style="background: #f0f9ff; padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+                        <p style="margin: 0;"><strong><i class="fas fa-info-circle"></i> Note:</strong> Approved appointments cannot be edited or cancelled. Please contact the clinic directly for any changes.</p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('modalContent').innerHTML = modalContent;
+            document.getElementById('appointmentModal').style.display = 'block';
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('appointmentModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('appointmentModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Auto-refresh dashboard every 60 seconds
+        setTimeout(function() {
+            window.location.reload();
+        }, 60000);
+    </script>
+</body>
+</html>

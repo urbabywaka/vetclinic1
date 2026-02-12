@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Appointment | VetCare Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .delete-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            overflow: hidden;
+        }
+
+        .delete-header {
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .delete-header i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .delete-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .delete-body {
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .pet-info {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #475569;
+            min-width: 120px;
+        }
+
+        .delete-warning {
+            background: #fef3c7;
+            border-left: 4px solid #d97706;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            border-radius: 0 8px 8px 0;
+            text-align: left;
+        }
+
+        .delete-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 0.9rem 1.8rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            min-width: 140px;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            body {
+                padding: 1rem;
+            }
+            
+            .delete-body {
+                padding: 1.5rem;
+            }
+            
+            .delete-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="delete-container">
+        <div class="delete-header">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h1>Delete Appointment</h1>
+            <p>This action cannot be undone</p>
+        </div>
+
+        <div class="delete-body">
+            <div class="pet-info">
+                <div class="info-row">
+                    <span class="info-label">Pet Name:</span>
+                    <span class="info-value">{{ appointment.pet_name }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Species:</span>
+                    <span class="info-value">{{ appointment.species }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Date:</span>
+                    <span class="info-value">{{ appointment.appointment_date }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Time:</span>
+                    <span class="info-value">{{ appointment.appointment_time }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Reason:</span>
+                    <span class="info-value">{{ appointment.reason }}</span>
+                </div>
+            </div>
+
+            <div class="delete-warning">
+                <i class="fas fa-exclamation-circle"></i>
+                <strong>Warning:</strong> This will permanently delete the appointment record. All information about this appointment will be lost.
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="delete-actions">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Confirm Delete
+                    </button>
+                    <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

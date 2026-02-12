@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | VetCare Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: #334155;
+        }
+
+        /* Admin Header */
+        .admin-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-title h1 {
+            font-size: 1.8rem;
+            color: white;
+        }
+
+        .admin-nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .admin-nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: background 0.3s;
+        }
+
+        .admin-nav a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-logout {
+            background: #ef4444;
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: #dc2626;
+        }
+
+        /* Dashboard Container */
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+        }
+
+        .icon-blue { background: #3b82f6; }
+        .icon-green { background: #10b981; }
+        .icon-red { background: #ef4444; }
+        .icon-purple { background: #8b5cf6; }
+        .icon-orange { background: #f59e0b; }
+        .icon-yellow { background: #eab308; }
+        .icon-indigo { background: #6366f1; }
+
+        .stat-content h3 {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-bottom: 0.3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .action-btn {
+            background: white;
+            border: 2px solid #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #334155;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .action-btn:hover {
+            background: #f1f5f9;
+            border-color: #3b82f6;
+            transform: translateY(-3px);
+        }
+
+        .action-btn i {
+            font-size: 2rem;
+            color: #3b82f6;
+        }
+
+        .action-btn span {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        /* Tables */
+        .tables-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .table-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .view-all {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .view-all:hover {
+            text-decoration: underline;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin-table th {
+            background: #f8fafc;
+            padding: 1rem;
+            text-align: left;
+            color: #475569;
+            font-weight: 600;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .admin-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .admin-table tr:hover {
+            background: #f8fafc;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-pending { background: #fef3c7; color: #d97706; }
+        .status-approved { background: #d1fae5; color: #059669; }
+        .status-rejected { background: #fee2e2; color: #dc2626; }
+        .status-completed { background: #dbeafe; color: #1e40af; }
+        .status-cancelled { background: #f3f4f6; color: #6b7280; }
+
+        /* Action Buttons */
+        .action-buttons-small {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn-small {
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-approve { background: #d1fae5; color: #059669; }
+        .btn-approve:hover { background: #a7f3d0; }
+        .btn-reject { background: #fee2e2; color: #dc2626; }
+        .btn-reject:hover { background: #fecaca; }
+        .btn-complete { background: #dbeafe; color: #1e40af; }
+        .btn-complete:hover { background: #bfdbfe; }
+        .btn-edit { background: #f3f4f6; color: #374151; }
+        .btn-edit:hover { background: #e5e7eb; }
+        .btn-view { background: #fef3c7; color: #d97706; }
+        .btn-view:hover { background: #fde68a; }
+
+        /* User Cards */
+        .users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .user-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .user-card h4 {
+            margin-bottom: 0.5rem;
+            color: #1e293b;
+        }
+
+        .user-card p {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .user-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+
+        .user-stat {
+            text-align: center;
+        }
+
+        .user-stat .number {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1e40af;
+        }
+
+        .user-stat .label {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .tables-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .admin-nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .dashboard-container {
+                padding: 0 1rem;
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Admin Header -->
+    <header class="admin-header">
+        <div class="admin-title">
+            <h1><i class="fas fa-crown"></i> Admin Dashboard</h1>
+            <span>Welcome, {{ user.username }}!</span>
+        </div>
+        <nav class="admin-nav">
+            <a href="{% url 'admin_dashboard' %}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="/admin/" target="_blank"><i class="fas fa-cog"></i> Admin Panel</a>
+            <a href="{% url 'home' %}"><i class="fas fa-home"></i> Website</a>
+            <a href="{% url 'logout' %}" class="btn-logout">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="dashboard-container">
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon icon-blue">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Total Appointments</h3>
+                    <div class="stat-number">{{ total_appointments }}</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon icon-green">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Total Users</h3>
+                    <div class="stat-number">{{ total_users }}</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon icon-yellow">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Pending Today</h3>
+                    <div class="stat-number">{{ appointments_today }}</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon icon-red">
+                    <i class="fas fa-exclamation-circle"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Pending Approval</h3>
+                    <div class="stat-number">{{ pending_appointments }}</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon icon-purple">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Approved</h3>
+                    <div class="stat-number">{{ approved_appointments }}</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon icon-indigo">
+                    <i class="fas fa-calendar-day"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Today's Date</h3>
+                    <div class="stat-number">{{ today|date:"M d" }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <section class="quick-actions">
+            <h2 class="section-title"><i class="fas fa-bolt"></i> Quick Actions</h2>
+            <div class="action-buttons">
+                <a href="#pending" class="action-btn">
+                    <i class="fas fa-clock"></i>
+                    <span>Review Pending Appointments</span>
+                    <small>{{ pending_appointments }} waiting</small>
+                </a>
+                <a href="#today" class="action-btn">
+                    <i class="fas fa-calendar-day"></i>
+                    <span>Today's Schedule</span>
+                    <small>{{ appointments_today }} appointments</small>
+                </a>
+                <a href="/admin/auth/user/" target="_blank" class="action-btn">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Manage Users</span>
+                    <small>{{ total_users }} registered</small>
+                </a>
+                <a href="/admin/appointments/appointment/" target="_blank" class="action-btn">
+                    <i class="fas fa-database"></i>
+                    <span>Database Management</span>
+                    <small>Full control panel</small>
+                </a>
+            </div>
+        </section>
+
+        <!-- Recent Appointments & Today's Schedule -->
+        <div class="tables-grid">
+            <!-- Recent Appointments -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h2 class="section-title"><i class="fas fa-history"></i> Recent Appointments</h2>
+                </div>
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Pet</th>
+                                <th>Owner</th>
+                                <th>Date & Time</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for appointment in recent_appointments %}
+                            <tr>
+                                <td>
+                                    <strong>{{ appointment.pet_name }}</strong><br>
+                                    <small>{{ appointment.species }}</small>
+                                </td>
+                                <td>{{ appointment.user.username }}</td>
+                                <td>
+                                    {{ appointment.appointment_date }}<br>
+                                    <small>{{ appointment.appointment_time }}</small>
+                                </td>
+                                <td>
+                                    <span class="status-badge status-{{ appointment.status }}">
+                                        {{ appointment.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons-small">
+                                      {% if appointment.status == 'pending' %}
+    <a href="{% url 'admin_approve_appointment' appointment.id %}" 
+       class="action-btn-small btn-approve">
+        <i class="fas fa-check"></i> Approve
+    </a>
+    <a href="{% url 'admin_reject_appointment' appointment.id %}" 
+       class="action-btn-small btn-reject">
+        <i class="fas fa-times"></i> Reject
+    </a>
+{% elif appointment.status == 'approved' %}
+    <a href="{% url 'admin_complete_appointment' appointment.id %}" 
+       class="action-btn-small btn-complete">
+        <i class="fas fa-check-double"></i> Complete
+    </a>
+{% endif %}
+
+<a href="{% url 'admin_edit_appointment' appointment.id %}" 
+   class="action-btn-small btn-edit">
+    <i class="fas fa-edit"></i> Edit
+</a>
+
+<a href="{% url 'admin_view_user' appointment.user.id %}" 
+   class="action-btn-small btn-view">
+    <i class="fas fa-eye"></i> View
+</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 2rem; color: #64748b;">
+                                    <i class="fas fa-inbox fa-2x"></i><br>
+                                    No appointments found
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Today's Appointments -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h2 class="section-title"><i class="fas fa-calendar-day"></i> Today's Appointments</h2>
+                    <span class="badge">{{ today_appointments.count }} total</span>
+                </div>
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Pet</th>
+                                <th>Owner</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for appointment in today_appointments %}
+                            <tr>
+                                <td><strong>{{ appointment.appointment_time }}</strong></td>
+                                <td>{{ appointment.pet_name }}</td>
+                                <td>{{ appointment.user.username }}</td>
+                                <td>
+                                    <span class="status-badge status-{{ appointment.status }}">
+                                        {{ appointment.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons-small">
+                                        {% if appointment.status == 'pending' %}
+                                            <a href="{% url 'admin_update_appointment' appointment.id 'approve' %}" 
+                                               class="action-btn-small btn-approve">Approve</a>
+                                            <a href="{% url 'admin_update_appointment' appointment.id 'reject' %}" 
+                                               class="action-btn-small btn-reject">Reject</a>
+                                        {% endif %}
+                                        <a href="{% url 'admin_edit_appointment' appointment.id %}" 
+                                           class="action-btn-small btn-edit">Edit</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 2rem; color: #64748b;">
+                                    <i class="fas fa-calendar fa-2x"></i><br>
+                                    No appointments scheduled for today
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Users -->
+        <div class="table-card">
+            <div class="table-header">
+                <h2 class="section-title"><i class="fas fa-users"></i> Top Users</h2>
+                <a href="/admin/auth/user/" target="_blank" class="view-all">View All Users →</a>
+            </div>
+            <div class="users-grid">
+                {% for user in top_users %}
+                <div class="user-card">
+                    <h4>{{ user.username }}</h4>
+                    <p>{{ user.email }}</p>
+                    <div class="user-stats">
+                        <div class="user-stat">
+                            <div class="number">{{ user.appointment_count }}</div>
+                            <div class="label">Appointments</div>
+                        </div>
+                        <div class="user-stat">
+                            <div class="number">
+                                {% if user.is_superuser %}
+                                    <span style="color: #dc2626;">Admin</span>
+                                {% else %}
+                                    User
+                                {% endif %}
+                            </div>
+                            <div class="label">Role</div>
+                        </div>
+                        <div class="user-stat">
+                            <a href="{% url 'admin_view_user' user.id %}" class="action-btn-small btn-view">
+                                View
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div style="text-align: center; padding: 2rem; color: #64748b; grid-column: 1 / -1;">
+                    <i class="fas fa-users fa-2x"></i><br>
+                    No users found
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Auto refresh dashboard every 30 seconds
+        setTimeout(function() {
+            window.location.reload();
+        }, 30000);
+        
+        // Status filter
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusBadges = document.querySelectorAll('.status-badge');
+            statusBadges.forEach(badge => {
+                badge.addEventListener('click', function() {
+                    const status = this.classList[1].replace('status-', '');
+                    window.location.href = `?status=${status}`;
+                });
+            });
+        });
+    </script>
+</body>
+</html>
